@@ -1,23 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import InputTemperature from './components/Inputtemperature';
+import Boiled from './components/Boiled';
+import { toCelsius, toFahrenheit, tryConvert } from './utils/temperatureConverter';
+import { celsiusIsBoiled, fahrenheitIsBoiled } from './utils/boilFormuls';
+
 
 function App() {
+  const [temperature, setTemperature] = useState(0);
+  const [scale, setScale] = useState('с');
+
+  const celsiusChange = (value) => {
+    setTemperature(value);
+    setScale('c')
+  }
+  const fahrenheitChange = (value) => {
+    setTemperature(value);
+    setScale('f')
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <InputTemperature
+          scale='c'
+          temperature={(scale === 'f')? tryConvert(temperature, toCelsius): temperature}
+          handleTemperatureChange={celsiusChange}/>
+      <InputTemperature
+          scale='f'
+          temperature={(scale === 'c')? tryConvert(temperature, toFahrenheit): temperature}
+          handleTemperatureChange={fahrenheitChange}/>
+      <Boiled
+          temperature={temperature}
+          isBoiled={scale === 'c'? celsiusIsBoiled: fahrenheitIsBoiled}/>
     </div>
   );
 }
